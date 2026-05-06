@@ -4,4 +4,6 @@
 #pragma once
 
 class DiskManager : public Interface {
+    public:
+        DiskManager();
 };
