@@ -1,4 +1,3 @@
-#include <mutex>
 
 #include "buffer_pool_manager.hpp"
 
@@ -9,9 +8,11 @@ void BufferPoolManager::bootBufferPoolManager() {
         auto emptyPage = Page();
         BufferPoolManager::bufferPool.push_back(emptyPage);
     }
+
+    BufferPoolManager::freeSlots.store(maxBlocks);
 }
 
-void BufferPoolManager::WritePage(const int pid, const char *data) {
+void BufferPoolManager::Write(const int pid, const char *data) {
     /*
     auto result = BufferPoolManager::findPage(pid);
     Page *page;
@@ -30,8 +31,8 @@ void BufferPoolManager::WritePage(const int pid, const char *data) {
     */
 }
 
-void BufferPoolManager::DeletePage(const int pid) {
+void BufferPoolManager::Delete(const int pid) {
 }
 
-void BufferPoolManager::ReadPage(const int pid) {
+void BufferPoolManager::Read(const int pid) {
 }

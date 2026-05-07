@@ -7,22 +7,22 @@ class Interface {
         ~Interface() = default;
 
         /*
-         * DeletePage remove a page on disk or in the buffer
+         * Delete remove a page/frame on disk or in the buffer
          * @param pid is the id of the page
          * */
-        virtual void DeletePage(const int pid) = 0;
+        virtual void Delete(const int pid) = 0;
 
         /*
-         * ReadPage read a page on disk or in the buffer pool
+         * Read read a page/frame on disk or in the buffer pool
          * @param pid is the id of the page
          * TODO-> @return pointer to the page or frame
          * */
-        virtual void ReadPage(const int pid) = 0;
+        virtual void Read(const int pid) = 0;
 
         /*
-         * WritePage write a page on disk or in the buffer pool
+         * Write write a page/frame on disk or in the buffer pool
          * @param pid is the id of the page
          * @param data contains a buffer with the data to write
          * */
-        virtual void WritePage(const int pid, const char *data) = 0;
+        virtual void Write(const int pid, const char *data) = 0;
 };
