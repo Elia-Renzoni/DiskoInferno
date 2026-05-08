@@ -16,10 +16,8 @@ void Scheduler::addRequest(Request *req) {
 
 void Scheduler::execScheduler() {
     std::thread([this] {
-            bool isAlive = Scheduler::running.load();
-            while (isAlive) {
+            while (Scheduler::running.load()) {
                 Scheduler::doSchedule();
-                isAlive = Scheduler::running.load();
             }
     });
 }
@@ -39,8 +37,8 @@ void Scheduler::doSchedule() {
         case Request::READ_ONLY:
             return; // not supported 
         case Request::WRITE_ONLY:
-            Scheduler::diskController.WritePage(elem->pageID, elem->data);
+            Scheduler::diskController.Write(elem->pageID, elem->data);
         case Request::DELETE_ONLY:
-            Scheduler::diskController.DeletePage(elem->pageID);
+            Scheduler::diskController.Delete(elem->pageID);
     }
 }

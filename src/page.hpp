@@ -1,12 +1,14 @@
 
 #include <atomic>
 #include <shared_mutex>
-
+#include <cstring>
 
 #pragma once
 
+constexpr int DATA_REGION = 4075; // page size 4096 (4KB) - 21 header size (21 bytes) = 4075
+
 struct Page {
-    char *data_;
+    char data_[DATA_REGION];
     int pageID_;
     std::atomic<int> pins_;
     std::atomic<bool> isDirty_;
@@ -31,7 +33,7 @@ struct Page {
     };
 
     void addData(char *data) {
-        data_ = data;
+        std::memcpy(data_, data, DATA_REGION);
     };
 
     void addPageID(int pid) {
