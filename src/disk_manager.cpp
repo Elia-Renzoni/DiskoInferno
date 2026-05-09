@@ -19,9 +19,7 @@ void DiskManager::Write(const int pid, const char *data) {
     page.h.nextOffset = currentOffset + sizeof(page.h) + page.h.dataSize;
     std::memcpy(page.data, data, page.h.dataSize);
 
-    if (!DiskManager::offsetLookup_.count(pid)) {
-        DiskManager::offsetLookup_[pid] = currentOffset;
-    }
+    DiskManager::offsetLookup_[pid] = currentOffset;
 
     DiskManager::file_.write(
             reinterpret_cast<const char *>(&page.h),

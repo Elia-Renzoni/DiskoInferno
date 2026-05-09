@@ -13,7 +13,7 @@ TEST(DiskManager, TestInsert) {
     m->Write(10, "qux");
 
     auto result = m->Read(10);
-    EXPECT_EQ(result.value(), "foo");
+    EXPECT_EQ(result.value(), "qux");
 
     result = m->Read(22);
     EXPECT_EQ(result.value(), "bar");
@@ -32,4 +32,16 @@ TEST(DiskManager, TestDelete) {
 
     auto result = m->Read(32);
     EXPECT_FALSE(result.has_value());
+}
+
+TEST(DiskManager, TestUpdate) {
+    auto m = std::make_unique<DiskManager>("file2.db");
+
+    m->Write(1, "foo");
+    m->Write(32, "bar");
+    m->Write(23, "mock");
+    m->Write(32, "bar-updated");
+
+    auto result = m->Read(32);
+    EXPECT_EQ(result.value(), "bar-updated");
 }
