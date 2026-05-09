@@ -16,7 +16,7 @@ class BufferPoolManager : public Interface {
        
         void bootBufferPoolManager();
         void Write(const int pid, const char *data) override;
-        void Read(const int pid) override;
+        char* Read(const int pid) override;
         void Delete(const int pid) override;
     private:
         
