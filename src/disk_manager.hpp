@@ -3,6 +3,7 @@
 #include <shared_mutex>
 
 #include "interface.hpp"
+#include "page.hpp"
 
 #pragma once
 
@@ -22,22 +23,22 @@ class DiskManager : public Interface {
                 int32_t pageID;
                 Operation op;
                 int32_t dataSize;
-                int32_t nextOffset;
+                int64_t nextOffset;
             };
 
             Header h;
-            char *data;
+            char data[DATA_REGION];
         };
 
         void Write(const int pid, const char *data) override;
-        char* Read(const int pid) override;
+        std::optional<std::string> Read(const int pid) override;
         void Delete(const int pid) override;
     private:
         void scan(DiskPage *p, int pid) {
             auto len = offsetLookup_.size();
             file_.seekg(0);
 
-            std::istream *result;
+            std::istream *result = &file_;
             while (*result) {
                 result = &file_.read(reinterpret_cast<char*>(&p->h), sizeof(p->h));
                 if (p->h.pageID == pid && p->h.op != DELETE) {

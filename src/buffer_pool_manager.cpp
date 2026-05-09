@@ -1,4 +1,6 @@
 
+#include <string>
+
 #include "buffer_pool_manager.hpp"
 
 
@@ -34,5 +36,6 @@ void BufferPoolManager::Write(const int pid, const char *data) {
 void BufferPoolManager::Delete(const int pid) {
 }
 
-void BufferPoolManager::Read(const int pid) {
+std::optional<std::string> BufferPoolManager::Read(const int pid) {
+    return std::nullopt;
 }

@@ -31,5 +31,5 @@ TEST(DiskManager, TestDelete) {
     m->Delete(32);
 
     auto result = m->Read(32);
-    EXPECT_EQ(result, nullptr);
+    EXPECT_FALSE(result.has_value());
 }

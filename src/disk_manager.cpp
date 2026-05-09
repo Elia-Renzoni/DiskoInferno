@@ -1,6 +1,7 @@
 
 #include <cstring>
 #include <mutex>
+#include <optional>
 
 #include "disk_manager.hpp"
 #include "page.hpp"
@@ -32,8 +33,8 @@ void DiskManager::Write(const int pid, const char *data) {
     DiskManager::file_.flush();
 }
 
-char* DiskManager::Read(const int pid) {
-    if (pid < 0) return nullptr;
+std::optional<std::string> DiskManager::Read(const int pid) {
+    if (pid < 0) return std::nullopt;
 
     std::shared_lock<std::shared_mutex> lock(DiskManager::latch_);
 
@@ -47,13 +48,13 @@ char* DiskManager::Read(const int pid) {
         DiskManager::file_.seekg(offset);
         DiskManager::file_.read(reinterpret_cast<char*>(&p.h), 21);
         DiskManager::file_.read(p.data, p.h.dataSize);
-        return p.data;
+        return std::string(p.data, p.h.dataSize);
     }
 
     // if no offset is provided execute a full scan and 
     // rebuild the lookup map if needed
     DiskManager::scan(&p, pid);
-    return p.data;
+    return std::string(p.data, p.h.dataSize);
 }
 
 void DiskManager::Delete(const int pid) {
