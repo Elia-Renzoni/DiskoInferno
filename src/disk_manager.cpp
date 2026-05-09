@@ -59,26 +59,24 @@ std::optional<std::string> DiskManager::Read(const int pid) {
 
 void DiskManager::Delete(const int pid) {
     if (pid < 0) return;
+    std::unique_lock<std::shared_mutex> lock(latch_);
 
-    std::unique_lock<std::shared_mutex> lock(DiskManager::latch_);
-    int64_t offset = 0;
+    if (!offsetLookup_.count(pid)) return;
+
     DiskPage p;
-    if (!DiskManager::offsetLookup_.count(pid)) return;
+    file_.seekg(offsetLookup_[pid]);
+    file_.read(reinterpret_cast<char*>(&p.h), sizeof(p.h));
 
-    offset = DiskManager::offsetLookup_[pid];
-    DiskManager::file_.seekg(offset);
-    DiskManager::file_.read(reinterpret_cast<char*>(&p.h), sizeof(p.h));
-    p.h.op = DiskManager::Operation::DELETE;
-    int64_t current = DiskManager::file_.tellp();
-    p.h.nextOffset = current + sizeof(p.h) + sizeof(p.data);
+    p.h.op = DELETE;
+    p.h.dataSize = 0;  
+    file_.seekp(0, std::ios::end);
+    int64_t current = file_.tellp();
+    p.h.nextOffset = current + sizeof(p.h);  
 
-    DiskManager::file_.seekp(0, std::ios::end);
-    DiskManager::file_.write(reinterpret_cast<char*>(&p.h), sizeof(p.h));
-    DiskManager::file_.write(p.data, DATA_REGION);
+    file_.write(reinterpret_cast<char*>(&p.h), sizeof(p.h));
+    file_.flush();
 
-    DiskManager::file_.flush();
-
-    DiskManager::offsetLookup_.erase(pid);
+    offsetLookup_.erase(pid);
 }
 
 

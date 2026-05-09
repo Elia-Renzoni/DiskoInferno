@@ -35,19 +35,20 @@ class DiskManager : public Interface {
         void Delete(const int pid) override;
     private:
         void scan(DiskPage *p, int pid) {
-            auto len = offsetLookup_.size();
+            p->h.pageID = -1;
             file_.seekg(0);
 
-            std::istream *result = &file_;
-            while (*result) {
-                result = &file_.read(reinterpret_cast<char*>(&p->h), sizeof(p->h));
-                if (p->h.pageID == pid && p->h.op != DELETE) {
-                    char data[p->h.dataSize];
-                    file_.read(data, p->h.dataSize);
-                    return;
+            while (file_.read(reinterpret_cast<char*>(&p->h), sizeof(p->h))) {
+                if (p->h.pageID == pid) {
+                    if (p->h.op == DELETE) {
+                        p->h.pageID = -1;  //
+                        file_.seekg(p->h.nextOffset);
+                        continue;
+                    }
+                    file_.read(p->data, p->h.dataSize);
+                    file_.seekg(p->h.nextOffset);
+                    continue;
                 }
-
-                if (len && p->h.op != DELETE) offsetLookup_[pid] = p->h.nextOffset;
                 file_.seekg(p->h.nextOffset);
             }
         };
