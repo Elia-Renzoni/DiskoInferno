@@ -13,13 +13,13 @@ TEST(DiskManager, TestInsert) {
     m->Write(10, "qux");
 
     auto result = m->Read(10);
-    EXPECT_EQ(result, "foo");
+    EXPECT_EQ(result.value(), "foo");
 
     result = m->Read(22);
-    EXPECT_EQ(result, "bar");
+    EXPECT_EQ(result.value(), "bar");
 
     result = m->Read(33);
-    EXPECT_EQ(result, "mock");
+    EXPECT_EQ(result.value(), "mock");
 }
 
 TEST(DiskManager, TestDelete) {

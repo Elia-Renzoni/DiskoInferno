@@ -4,7 +4,6 @@
 #include <optional>
 
 #include "disk_manager.hpp"
-#include "page.hpp"
 
 void DiskManager::Write(const int pid, const char *data) {
     if (pid < 0) return;
@@ -54,6 +53,11 @@ std::optional<std::string> DiskManager::Read(const int pid) {
     // if no offset is provided execute a full scan and 
     // rebuild the lookup map if needed
     DiskManager::scan(&p, pid);
+
+    if (p.h.pageID == -1 && p.h.op == DELETE) {
+        return std::nullopt;
+    } 
+
     return std::string(p.data, p.h.dataSize - 1);
 }
 
