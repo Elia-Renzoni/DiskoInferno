@@ -1,4 +1,7 @@
 
+#include <string>
+#include <optional>
+
 #pragma once
 
 class Interface {
@@ -15,9 +18,9 @@ class Interface {
         /*
          * Read read a page/frame on disk or in the buffer pool
          * @param pid is the id of the page
-         * TODO-> @return pointer to the page or frame
+         * TODO-> @return pointer to the data
          * */
-        virtual void Read(const int pid) = 0;
+        virtual std::optional<std::string> Read(const int pid) = 0;
 
         /*
          * Write write a page/frame on disk or in the buffer pool
