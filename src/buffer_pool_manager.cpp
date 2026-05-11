@@ -5,16 +5,16 @@
 
 
 void BufferPoolManager::bootBufferPoolManager() {
-    auto maxBlocks = BufferPoolManager::maxPages;
+    auto maxBlocks = BufferPoolManager::maxFrames;
     for (int i = 0; i < maxBlocks; i++) {
-        auto emptyPage = Page();
-        BufferPoolManager::bufferPool.push_back(emptyPage);
+        auto emptyFrame = Frame();
+        BufferPoolManager::bufferPool.push_back(emptyFrame);
     }
 
     BufferPoolManager::freeSlots.store(maxBlocks);
 }
 
-void BufferPoolManager::Write(const int pid, const char *data) {
+void BufferPoolManager::Write(const int fid, const char *data) {
     /*
     auto result = BufferPoolManager::findPage(pid);
     Page *page;
@@ -33,9 +33,9 @@ void BufferPoolManager::Write(const int pid, const char *data) {
     */
 }
 
-void BufferPoolManager::Delete(const int pid) {
+void BufferPoolManager::Delete(const int fid) {
 }
 
-std::optional<std::string> BufferPoolManager::Read(const int pid) {
+std::optional<std::string> BufferPoolManager::Read(const int fid) {
     return std::nullopt;
 }

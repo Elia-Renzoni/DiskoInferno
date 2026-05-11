@@ -8,35 +8,35 @@
  * [1][2][3][4][5] (new: 6)
  * [1][2][3][4][5][6]
  */
-void ClockReplacer::Insert(int pid) {
-    if (pid < 0) return;
+void ClockReplacer::Insert(int fid) {
+    if (fid < 0) return;
 
     auto entry = ClockReplacer::ClockEntry{
-        .pageID = pid,
+        .frameID = fid,
         .roundFlag = false,
     };
 
     std::scoped_lock lock(ClockReplacer::latch_);
-    if (ClockReplacer::lookupMap_.count(pid)) return;
+    if (ClockReplacer::lookupMap_.count(fid)) return;
 
     ClockReplacer::clockBuffer_.push_back(entry);
 
-    ClockReplacer::lookupMap_[pid] = ClockReplacer::clockBuffer_.begin();
+    ClockReplacer::lookupMap_[fid] = ClockReplacer::clockBuffer_.begin();
 };
 
 /**
  *
  *
  */
-void ClockReplacer::Delete(int pid) {
-    if (pid < 0) return;
+void ClockReplacer::Delete(int fid) {
+    if (fid < 0) return;
 
     std::scoped_lock lock(ClockReplacer::latch_);
-    if (!ClockReplacer::lookupMap_.count(pid)) return;
+    if (!ClockReplacer::lookupMap_.count(fid)) return;
 
-    auto it = ClockReplacer::lookupMap_[pid];
+    auto it = ClockReplacer::lookupMap_[fid];
     ClockReplacer::clockBuffer_.erase(it);
-    ClockReplacer::lookupMap_.erase(pid);
+    ClockReplacer::lookupMap_.erase(fid);
 };
 
 /**
@@ -49,7 +49,7 @@ int ClockReplacer::Evict() {
     std::scoped_lock lock(ClockReplacer::latch_);
 
     ClockEntry victim;
-    victim.pageID = -1;
+    victim.frameID = -1;
 
     constexpr int rounds = 2;
     for (int round = 0; round < rounds; round++) {
@@ -62,13 +62,13 @@ int ClockReplacer::Evict() {
           }
     }
 
-    if (victim.pageID != -1) {
-        auto it = ClockReplacer::lookupMap_[victim.pageID];
+    if (victim.frameID != -1) {
+        auto it = ClockReplacer::lookupMap_[victim.frameID];
         ClockReplacer::clockBuffer_.erase(it);
-        ClockReplacer::lookupMap_.erase(victim.pageID);
+        ClockReplacer::lookupMap_.erase(victim.frameID);
     } 
 
-    return victim.pageID;
+    return victim.frameID;
 };
 
 int ClockReplacer::Size() {
