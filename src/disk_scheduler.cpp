@@ -33,9 +33,10 @@ void Scheduler::doSchedule() {
     if (!req.has_value()) return;
 
     auto elem = req.value();
+    std::optional<std::string> readResult;
     switch (elem->operation) {
         case Request::READ_ONLY:
-            return; // not supported
+            readResult = Scheduler::diskController.Read(elem->pageID);
         case Request::WRITE_ONLY:
             Scheduler::diskController.Write(elem->pageID, elem->data);
         case Request::DELETE_ONLY:
