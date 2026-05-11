@@ -5,34 +5,34 @@ LRU::LRU() {};
 
 /**
  * execution example:
- * [1][2][3][4][5][6] (pid=7, pin_count == 0)
+ * [1][2][3][4][5][6] (fid=7, pin_count == 0)
  * [7][1][2][3][4][5][6]
  */
-void LRU::Insert(int pid) {
-    if (pid < 0) return; 
+void LRU::Insert(int fid) {
+    if (fid < 0) return; 
     std::scoped_lock lock(LRU::latch_);
 
-    if (LRU::lookupMap_.count(pid)) return;
+    if (LRU::lookupMap_.count(fid)) return;
 
-    LRU::lruList_.push_front(pid);
-    LRU::lookupMap_[pid] = LRU::lruList_.begin();
+    LRU::lruList_.push_front(fid);
+    LRU::lookupMap_[fid] = LRU::lruList_.begin();
 };
 
 /**
  * execution example:
- * [7][1][2][3][4][5][6] (pid=6, pin_count > 0)
+ * [7][1][2][3][4][5][6] (fid=6, pin_count > 0)
  * [7][1][2][3][4][5]
  *
  */
-void LRU::Delete(int pid) {
-    if (pid < 0) return;
+void LRU::Delete(int fid) {
+    if (fid < 0) return;
     std::scoped_lock lock(LRU::latch_);
 
-    if (!LRU::lookupMap_.count(pid)) return;
+    if (!LRU::lookupMap_.count(fid)) return;
     
-    auto it = LRU::lookupMap_[pid];
+    auto it = LRU::lookupMap_[fid];
     LRU::lruList_.erase(it);
-    LRU::lookupMap_.erase(pid);
+    LRU::lookupMap_.erase(fid);
 };
 
 /**

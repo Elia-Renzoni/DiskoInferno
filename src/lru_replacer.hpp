@@ -13,8 +13,8 @@ class LRU : public Replacer {
         ~LRU() = default;
 
         int Evict() override;
-        void Delete(int pid) override;
-        void Insert(int pid) override;
+        void Delete(int fid) override;
+        void Insert(int fid) override;
         int Size() override;
     private:
         std::deque<int> lruList_;

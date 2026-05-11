@@ -35,7 +35,7 @@ void Scheduler::doSchedule() {
     auto elem = req.value();
     switch (elem->operation) {
         case Request::READ_ONLY:
-            return; // not supported 
+            return; // not supported
         case Request::WRITE_ONLY:
             Scheduler::diskController.Write(elem->pageID, elem->data);
         case Request::DELETE_ONLY:

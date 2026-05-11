@@ -13,14 +13,14 @@ class Replacer {
     virtual int Evict() = 0;
 
     /**
-     * @param {pid} page id
+     * @param {fid} frame id
      */
-    virtual void Delete(int pid) = 0;
+    virtual void Delete(int fid) = 0;
 
     /**
-     * @param {pid} page id
+     * @param {fid} frame id
      */
-    virtual void Insert(int pid) = 0;
+    virtual void Insert(int fid) = 0;
 
 
     /**

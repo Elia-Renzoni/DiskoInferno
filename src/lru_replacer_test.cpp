@@ -10,7 +10,7 @@ TEST(LRUReplacer, TestInsertion) {
     lru.Insert(4);
     lru.Insert(3);
     lru.Insert(33);
-    lru.Insert(10); // duplicated page id
+    lru.Insert(10); // duplicated frame id
 
     auto lruListSize = lru.Size();
     EXPECT_EQ(lruListSize, 5);

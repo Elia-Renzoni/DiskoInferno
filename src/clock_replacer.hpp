@@ -11,12 +11,12 @@ class ClockReplacer : public Replacer {
       ~ClockReplacer() = default;
 
       struct ClockEntry {
-          int pageID;
+          int frameID;
           bool roundFlag;
       };
 
-      void Insert(int pid) override;
-      void Delete(int pid) override;
+      void Insert(int fid) override;
+      void Delete(int fid) override;
       int Evict() override;
       int Size() override;
     private:
