@@ -35,7 +35,7 @@ TEST(ClockReplacer, TestEviction) {
     clk.Insert(2);
 
     auto victim = clk.Evict();
-    EXPECT_EQ(victim, 10); // NOTE-> pontetial error generation
+    EXPECT_EQ(victim, 10);
     EXPECT_EQ(clk.Size(), 3);
 }
 
