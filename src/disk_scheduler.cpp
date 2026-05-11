@@ -37,9 +37,12 @@ void Scheduler::doSchedule() {
     switch (elem->operation) {
         case Request::READ_ONLY:
             readResult = Scheduler::diskController.Read(elem->pageID);
+            elem->rAck.set_value(readResult);
         case Request::WRITE_ONLY:
             Scheduler::diskController.Write(elem->pageID, elem->data);
+            elem->wdAck.set_value(true);
         case Request::DELETE_ONLY:
             Scheduler::diskController.Delete(elem->pageID);
+            elem->wdAck.set_value(true);
     }
 }
