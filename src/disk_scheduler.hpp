@@ -3,6 +3,7 @@
 #include <shared_mutex>
 #include <atomic>
 #include <optional>
+#include <future>
 
 #include "disk_manager.hpp"
 
@@ -19,6 +20,9 @@ struct Request {
     int datalen;
     RequestType operation;
     int pageID;
+
+    std::promise<bool> wdAck;    // for WRITE/DELETE requests
+    std::promise<std::optional<std::string>> rAck;     // for READ requests
 };
 
 class Scheduler {
