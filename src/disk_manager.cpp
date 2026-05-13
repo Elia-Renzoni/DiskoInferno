@@ -81,4 +81,12 @@ void DiskManager::Delete(const int pid) {
     offsetLookup_.erase(pid);
 }
 
+int DiskManager::generatePageID() {
+    auto latestPageID = DiskManager::monotonicPageID.load();
+    ++latestPageID;
+
+    DiskManager::monotonicPageID.store(latestPageID);
+    return latestPageID;
+}
+
 
