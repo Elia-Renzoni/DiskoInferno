@@ -15,17 +15,16 @@ struct Frame {
     std::shared_mutex latch;
 
     void pinFrame() {
-        auto pinCounter = pins_.load();
-        pinCounter += 1;
-        pins_.store(pinCounter);
+        pins_.fetch_add(1);
     };
 
     void unpinFrame() {
         auto pinCounter = pins_.load();
-        if (pinCounter <= 0) return;
+        while (true) {
+            if (pinCounter <= 0) return;
 
-        pinCounter -= 1;
-        pins_.store(pinCounter);
+            if (pins_.compare_exchange_weak(pinCounter, pinCounter - 1)) return;
+        }
     };
 
     bool isFrameEvictable() {
