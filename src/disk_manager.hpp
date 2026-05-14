@@ -30,6 +30,8 @@ class DiskManager : public Interface {
             char data[DATA_REGION];
         };
 
+        int generatePageID();
+
         void Write(const int pid, const char *data) override;
         std::optional<std::string> Read(const int pid) override;
         void Delete(const int pid) override;
@@ -53,6 +55,7 @@ class DiskManager : public Interface {
             }
         };
 
+        std::atomic<int> monotonicPageID;
         std::fstream file_;
         std::unordered_map<int, int64_t> offsetLookup_;
         std::shared_mutex latch_;
