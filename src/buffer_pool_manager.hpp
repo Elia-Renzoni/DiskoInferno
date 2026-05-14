@@ -50,7 +50,7 @@ class BufferPoolManager : public Interface {
         }
         
         void addIndex(char *data, int pid) {
-            std::scoped_lock<std::mutex> lock(indexLatch_);
+            std::unique_lock<std::shared_mutex> lock(indexLatch_);
 
             if (lookupIndex_.count(data)) {
                 return;
@@ -60,7 +60,7 @@ class BufferPoolManager : public Interface {
         }
 
         void destroyIndex(char *data) {
-            std::scoped_lock<std::mutex> lock(indexLatch_);
+            std::unique_lock<std::shared_mutex> lock(indexLatch_);
 
             if (lookupIndex_.count(data)) {
                 lookupIndex_.erase(data);
@@ -68,13 +68,13 @@ class BufferPoolManager : public Interface {
         }
 
         int getIndex(char *data) {
-            std::scoped_lock<std::mutex> lock(indexLatch_);
+            std::shared_lock<std::shared_mutex> lock(indexLatch_);
 
             return lookupIndex_[data];
         }
 
         void insertRoute(int pageID, int frameID) {
-            std::scoped_lock<std::mutex> lock(indexLatch_);
+            std::unique_lock<std::shared_mutex> lock(routingMapLatch_);
 
             if (routingMap_.count(frameID)) {
                 auto pid = routingMap_[frameID];
@@ -85,7 +85,7 @@ class BufferPoolManager : public Interface {
         }
 
         void destroyRoute(int frameID) {
-            std::scoped_lock<std::mutex> lock(indexLatch_);
+            std::unique_lock<std::shared_mutex> lock(routingMapLatch_);
 
             if (!routingMap_.count(frameID)) return;
 
@@ -93,7 +93,7 @@ class BufferPoolManager : public Interface {
         }
 
         std::optional<int> getRoute(int pageID) {
-            std::scoped_lock<std::mutex> lock(indexLatch_);
+            std::shared_lock<std::shared_mutex> lock(routingMapLatch_);
 
             auto it = routingMap_.begin();
             while (it != routingMap_.end()) {
@@ -112,7 +112,8 @@ class BufferPoolManager : public Interface {
         std::atomic<int> freeSlots;
         std::shared_mutex bufferPoolLock;
 
-        std::mutex indexLatch_;
+        std::shared_mutex indexLatch_;
         std::unordered_map<char*, int> lookupIndex_;    // TODO-> replace with B+tree
+        std::shared_mutex routingMapLatch_;
         std::unordered_map<int, int> routingMap_;
 };
