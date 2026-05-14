@@ -17,7 +17,7 @@ class BufferPoolManager : public Interface {
         ~BufferPoolManager() = default;
        
         void bootBufferPoolManager();
-        int generateFrameID();
+        std::optional<int> generateFrameID();
         std::optional<int> findPageID(char *data);
         std::optional<int> findFrameID(int pid);
 
@@ -43,10 +43,17 @@ class BufferPoolManager : public Interface {
         }
 
         void decrease() {
-            auto spots = freeSlots.load();
-            if (spots <= 0) return;
-            spots -= 1;
-            freeSlots.store(spots);
+            auto tryDecrease = [&]() -> bool {
+                auto spots = freeSlots.load();
+
+                while (true) {
+                    if (spots <= 0) return false;
+
+                    if (freeSlots.compare_exchange_weak(spots, spots - 1)) return true;
+                }
+            };
+
+            tryDecrease();
         }
         
         void addIndex(char *data, int pid) {

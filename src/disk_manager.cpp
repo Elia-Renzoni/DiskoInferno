@@ -82,11 +82,7 @@ void DiskManager::Delete(const int pid) {
 }
 
 int DiskManager::generatePageID() {
-    auto latestPageID = DiskManager::monotonicPageID.load();
-    ++latestPageID;
-
-    DiskManager::monotonicPageID.store(latestPageID);
-    return latestPageID;
+    return DiskManager::monotonicPageID.fetch_add(1) + 1;
 }
 
 

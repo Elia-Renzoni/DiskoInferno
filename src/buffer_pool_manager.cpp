@@ -13,15 +13,15 @@ void BufferPoolManager::bootBufferPoolManager() {
     BufferPoolManager::monotonicFrameID.store(0);
 }
 
-int BufferPoolManager::generateFrameID() {
+std::optional<int> BufferPoolManager::generateFrameID() {
     auto latestFrameID = BufferPoolManager::monotonicFrameID.load();
-    if (latestFrameID >= BufferPoolManager::maxFrames) {
-        return -1;
-    }
+    while (true) {
+        if (latestFrameID >= BufferPoolManager::maxFrames)
+            return std::nullopt;
 
-    ++latestFrameID;
-    BufferPoolManager::monotonicFrameID.store(latestFrameID);
-    return latestFrameID;
+        if (BufferPoolManager::monotonicFrameID.compare_exchange_weak(latestFrameID, latestFrameID + 1))
+            return latestFrameID + 1;
+    }
 }
 
 void BufferPoolManager::Write(const int fid, const char *data) {
