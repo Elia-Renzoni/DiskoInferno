@@ -25,22 +25,6 @@ std::optional<int> BufferPoolManager::generateFrameID() {
 }
 
 void BufferPoolManager::Write(const int fid, const char *data) {
-    /*
-    auto result = BufferPoolManager::findPage(pid);
-    Page *page;
-    if (result.has_value()) {
-        page = result.value();
-    }
-
-    page->pinPage();
-    std::unique_lock lock(page->latch);
-    // TODO-> replacing policy and write operation
-    //
-    // for eviction:
-
-
-    page->unpinPage();
-    */
 }
 
 void BufferPoolManager::Delete(const int fid) {
